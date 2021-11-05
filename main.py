@@ -5,16 +5,21 @@ import numpy as np
 
 # 初始化
 arr_shape = (10, 10)
-data_count = 3
-trng_data = []
+data_sum = arr_shape[0] * arr_shape[1]
+data_count = 10
 
-# 生成 10 組 10*10 二維陣列，存入List
+# # 生成 10 組 10*10 二維陣列，存入List
+trng_data = []
 for count in range(data_count):
     trng_data.append(np.where(np.random.random_sample(arr_shape) > 0.5, 1, -1))
 
+# 生成 10 組 1*100 一維陣列，併成二維
+# 因為計算過程的資料格式也是一維
+# 故，生成與計算用一維(省下np.ravel)，顯示轉二維是較便捷的做法
+# trng_data = np.where(np.random.random_sample((data_count, data_sum)) > 0.5, 1, -1)
+
 # STEP2.計算權重
 # 初始化
-data_sum = arr_shape[0] * arr_shape[1]
 tij_wt = np.zeros((data_sum, data_sum))
 
 # 張量積
@@ -22,12 +27,18 @@ tij_wt = np.zeros((data_sum, data_sum))
 # 兩矩陣做張量積存入tij權重，所有DATA執行一次
 for i in range(data_count):
     oneArr_data = np.ravel(trng_data[i])
-    tij_wt += np.kron(oneArr_data, oneArr_data.reshape(data_sum, 1))
 
-# 因Tij中主對角線為0(Tii=0)，因此生成一主對角線為0其餘為1之矩陣
-# 與Tij逐點乘積，得出權重
-diag_mp_rev = np.ones((data_sum, data_sum)) - np.eye(data_sum)
-tij_wt *= diag_mp_rev
+    # # 用kron，一維向量要轉置
+    # tij_wt += np.kron(oneArr_data, oneArr_data.reshape(data_sum, 1))
+    # 與上方等效，outer
+    tij_wt += np.outer(oneArr_data, oneArr_data)
+
+# 因Tij中主對角線為0(Tii=0)
+# # 生成一主對角線為0其餘為1之矩陣與Tij逐點乘積，得出權重
+# diag_mp_rev = np.ones((data_sum, data_sum)) - np.eye(data_sum)
+# tij_wt *= diag_mp_rev
+# 與上方等效，原矩陣減去抓出的tij主對角線，得出權重
+tij_wt -= np.diag(np.diag(tij_wt))
 
 # STEP3.破壞DATA
 # 初始化
@@ -43,19 +54,17 @@ corrupt_data = np.copy(cho_data)
 # 隨機選擇破壞位置，破壞DATA
 rand_list = np.random.randint(data_sum, size=break_count)
 corrupt_data[rand_list] = np.where(cho_data[rand_list] >= 1, -1, 1)
-# 方便比較DATA
-show_corrupt_data = np.reshape(corrupt_data, arr_shape)
 
 # STEP4.修復被破壞的DATA
-# 初始化
-recall_data = np.zeros(data_sum)
 
-# Tij 與 Xj 相乘後對每一列個別加總
-for i in range(data_sum):
-    recall_data[i] = np.sum((tij_wt * corrupt_data)[i, :])
-
-# 方便比較DATA
-show_recall_data = np.reshape(recall_data, arr_shape)
+# # 初始化
+# recall_data = np.zeros(data_sum)
+# # Tij 與 Xj 相乘後對每一列個別加總
+# for i in range(data_sum):
+#     recall_data = np.zeros(data_sum)
+#     recall_data[i] = np.sum((tij_wt * corrupt_data)[i, :])
+# 與上方內容等效
+recall_data = np.dot(tij_wt, corrupt_data)
 
 # 正規化
 # > 0 -> = 1
@@ -67,4 +76,9 @@ repair_data = np.where(recall_data > 0, 1, np.where(
 # repair_data[recall_data == 0] = recall_data
 # repair_data[recall_data < 0] = -1
 
+
+# 方便比較DATA
+show_cho_data = np.reshape(cho_data, arr_shape)
+show_corrupt_data = np.reshape(corrupt_data, arr_shape)
+show_recall_data = np.reshape(recall_data, arr_shape)
 show_repair_data = np.reshape(repair_data, arr_shape)
