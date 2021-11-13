@@ -8,7 +8,7 @@ arr_shape = (10, 10)
 data_sum = arr_shape[0] * arr_shape[1]
 data_count = 10
 
-# # 生成 10 組 10*10 二維陣列，存入List
+# 生成 data_count = 10 組 arr_shape = 10*10 二維陣列，存入List
 trng_data = []
 for count in range(data_count):
     trng_data.append(np.where(np.random.random_sample(arr_shape) > 0.5, 1, -1))
@@ -37,7 +37,10 @@ for i in range(data_count):
 # # 生成一主對角線為0其餘為1之矩陣與Tij逐點乘積，得出權重
 # diag_mp_rev = np.ones((data_sum, data_sum)) - np.eye(data_sum)
 # tij_wt *= diag_mp_rev
-# 與上方等效，原矩陣減去抓出的tij主對角線，得出權重
+# 與上方等效原矩陣減去抓出的tij主對角線，得出權重
+# diag 在做的事
+# 1.內層，抓出原矩陣的主對角線數值，回傳一維資料
+# 2.外層，將收到的一維的資料排在主對角線上，回傳二維資料
 tij_wt -= np.diag(np.diag(tij_wt))
 
 # STEP3.破壞DATA
@@ -46,13 +49,14 @@ tij_wt -= np.diag(np.diag(tij_wt))
 break_pct = 0.2
 break_count = int(data_sum * break_pct)
 
-# 隨機選擇DATA
+# 隨機挑一個DATA
 cho_num = np.random.randint(0, data_count)
 cho_data = np.ravel(trng_data[cho_num])
 corrupt_data = np.copy(cho_data)
 
-# 隨機選擇破壞位置，破壞DATA
+# 根據破壞的資料數 break_count，抽選DATA的位置
 rand_list = np.random.randint(data_sum, size=break_count)
+# 依照對應的位置破壞DATA
 corrupt_data[rand_list] = np.where(cho_data[rand_list] >= 1, -1, 1)
 
 # STEP4.修復被破壞的DATA
@@ -70,11 +74,13 @@ recall_data = np.dot(tij_wt, corrupt_data)
 # > 0 -> = 1
 # < 0 -> = -1
 # ==0 -> = 原值 XOld
-repair_data = np.where(recall_data > 0, 1, np.where(
-    recall_data < 0, -1, corrupt_data))
+
 # repair_data[recall_data > 0] = 1
 # repair_data[recall_data == 0] = recall_data
 # repair_data[recall_data < 0] = -1
+# 上方內容等效
+repair_data = np.where(recall_data > 0, 1, np.where(
+    recall_data < 0, -1, corrupt_data))
 
 
 # 方便比較DATA
