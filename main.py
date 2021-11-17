@@ -83,13 +83,23 @@ for i in range(data_count):
 # 初始化
 input_repair_data = np.copy(break_data)
 output_recall_data = np.copy(break_data)
+loop_count = np.zeros(data_count)
 
 # 將每一筆資料分別對Tij進行dot運算
 for i in range(data_count):
-    output_recall_data[i, :] = np.dot(tij_wt, input_repair_data[i, :])
-    # 正規化
-    output_recall_data[i, :] = np.where(output_recall_data[i, :] > 0, 1, np.where(
-        output_recall_data[i, :] < 0, -1, input_repair_data[i, :]))
+    # 迭代若無法收斂，一定次數後跳出迴圈
+    for loop_count[i] in range(100):
+        # 檢查迭代狀態用
+        # print("NO", i, "Loop", loop_count[i])
+        output_recall_data[i, :] = np.dot(tij_wt, input_repair_data[i, :])
+        # 正規化
+        output_recall_data[i, :] = np.where(output_recall_data[i, :] > 0, 1, np.where(
+            output_recall_data[i, :] < 0, -1, input_repair_data[i, :]))
+        # 判斷是否收斂，若收斂，跳下一筆資料
+        if np.all(output_recall_data[i, :] == input_repair_data[i, :]):
+            break
+        # 如果尚未收斂，目前的輸出會取代下次輸入(迭代)
+        input_repair_data[i, :] = np.copy(output_recall_data[i, :])
 
 # 已使用np.dot為最終計算寫法，以下保留撰寫過程
 # # recall_data = np.zeros(data_sum)
