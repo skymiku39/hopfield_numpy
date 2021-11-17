@@ -53,7 +53,6 @@ break_count = int(data_sum * break_pct / 100)
 # # 隨機挑一個DATA
 # cho_num = np.random.randint(0, data_count)
 # cho_data = np.ravel(trng_data[cho_num])
-#
 # corrupt_data = np.copy(cho_data)
 # # 根據破壞的資料數 break_count，抽選DATA的位置
 # rand_list = np.random.randint(data_sum, size=break_count)
@@ -112,19 +111,10 @@ for i in range(data_count):
 
 # 已使用np.where 為最終正規化寫法，以下保留撰寫過程
 # # 正規化
-# # > 0 -> = 1
-# # < 0 -> = -1
-# # ==0 -> = 原值 XOld
-#
+# # out[x] > 0 -> = 1 ；out[x] < 0 -> = -1 ； out[x] ==0 -> = input[x]
 # # repair_data[recall_data > 0] = 1
 # # repair_data[recall_data == 0] = recall_data
 # # repair_data[recall_data < 0] = -1
 # # 上方內容等效
 # repair_data = np.where(recall_data > 0, 1, np.where(
 #     recall_data < 0, -1, corrupt_data))
-#
-# # 方便比較DATA
-# show_cho_data = np.reshape(cho_data, arr_shape)
-# show_corrupt_data = np.reshape(corrupt_data, arr_shape)
-# show_recall_data = np.reshape(recall_data, arr_shape)
-# show_repair_data = np.reshape(repair_data, arr_shape)
