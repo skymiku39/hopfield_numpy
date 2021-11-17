@@ -49,41 +49,42 @@ tij_wt -= np.diag(np.diag(tij_wt))
 break_pct = 20
 break_count = int(data_sum * break_pct / 100)
 
-# 隨機挑一個DATA
-cho_num = np.random.randint(0, data_count)
-cho_data = np.ravel(trng_data[cho_num])
-corrupt_data = np.copy(cho_data)
-
-# 根據破壞的資料數 break_count，抽選DATA的位置
-rand_list = np.random.randint(data_sum, size=break_count)
-# 依照對應的位置破壞DATA
-corrupt_data[rand_list] = np.where(cho_data[rand_list] >= 1, -1, 1)
-
-# STEP4.修復被破壞的DATA
-
-# # 初始化
-# recall_data = np.zeros(data_sum)
-# # Tij 與 Xj 相乘後對每一列個別加總
-# for i in range(data_sum):
-#     recall_data = np.zeros(data_sum)
-#     recall_data[i] = np.sum((tij_wt * corrupt_data)[i, :])
-# 與上方內容等效
-recall_data = np.dot(tij_wt, corrupt_data)
-
-# 正規化
-# > 0 -> = 1
-# < 0 -> = -1
-# ==0 -> = 原值 XOld
-
-# repair_data[recall_data > 0] = 1
-# repair_data[recall_data == 0] = recall_data
-# repair_data[recall_data < 0] = -1
-# 上方內容等效
-repair_data = np.where(recall_data > 0, 1, np.where(
-    recall_data < 0, -1, corrupt_data))
-
-# 方便比較DATA
-show_cho_data = np.reshape(cho_data, arr_shape)
-show_corrupt_data = np.reshape(corrupt_data, arr_shape)
-show_recall_data = np.reshape(recall_data, arr_shape)
-show_repair_data = np.reshape(repair_data, arr_shape)
+# 隨機挑DATA的寫法不能做統計，因此作廢，保留抽選的寫法
+# # 隨機挑一個DATA
+# cho_num = np.random.randint(0, data_count)
+# cho_data = np.ravel(trng_data[cho_num])
+#
+# corrupt_data = np.copy(cho_data)
+# # 根據破壞的資料數 break_count，抽選DATA的位置
+# rand_list = np.random.randint(data_sum, size=break_count)
+# # 依照對應的位置破壞DATA
+# corrupt_data[rand_list] = np.where(cho_data[rand_list] >= 1, -1, 1)
+# 
+# # STEP4.修復被破壞的DATA
+#
+# # # 初始化
+# # recall_data = np.zeros(data_sum)
+# # # Tij 與 Xj 相乘後對每一列個別加總
+# # for i in range(data_sum):
+# #     recall_data = np.zeros(data_sum)
+# #     recall_data[i] = np.sum((tij_wt * corrupt_data)[i, :])
+# # 與上方內容等效
+# recall_data = np.dot(tij_wt, corrupt_data)
+#
+# # 正規化
+# # > 0 -> = 1
+# # < 0 -> = -1
+# # ==0 -> = 原值 XOld
+#
+# # repair_data[recall_data > 0] = 1
+# # repair_data[recall_data == 0] = recall_data
+# # repair_data[recall_data < 0] = -1
+# # 上方內容等效
+# repair_data = np.where(recall_data > 0, 1, np.where(
+#     recall_data < 0, -1, corrupt_data))
+#
+# # 方便比較DATA
+# show_cho_data = np.reshape(cho_data, arr_shape)
+# show_corrupt_data = np.reshape(corrupt_data, arr_shape)
+# show_recall_data = np.reshape(recall_data, arr_shape)
+# show_repair_data = np.reshape(repair_data, arr_shape)
