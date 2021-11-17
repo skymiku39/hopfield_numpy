@@ -80,8 +80,20 @@ for i in range(data_count):
 # 將這些數值進行分析(正規化)，可以得出接近正確的回憶內容
 # 回憶的次數可能需要超過一次以上，因此需要迭代與收斂
 
-#
-# # # 初始化
+# 初始化
+input_repair_data = np.copy(break_data)
+output_recall_data = np.copy(break_data)
+
+# 將每一筆資料分別對Tij進行dot運算
+for i in range(data_count):
+    output_recall_data[i, :] = np.dot(tij_wt, input_repair_data[i, :])
+
+# 正規化
+output_recall_data = np.where(output_recall_data > 0, 1, np.where(
+    output_recall_data < 0, -1, input_repair_data))
+
+
+# 已使用np.dot為最終計算寫法，以下保留撰寫過程
 # # recall_data = np.zeros(data_sum)
 # # # Tij 與 Xj 相乘後對每一列個別加總
 # # for i in range(data_sum):
@@ -89,7 +101,8 @@ for i in range(data_count):
 # #     recall_data[i] = np.sum((tij_wt * corrupt_data)[i, :])
 # # 與上方內容等效
 # recall_data = np.dot(tij_wt, corrupt_data)
-#
+
+# 已使用np.where 為最終正規化寫法，以下保留撰寫過程
 # # 正規化
 # # > 0 -> = 1
 # # < 0 -> = -1
