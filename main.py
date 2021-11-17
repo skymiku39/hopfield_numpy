@@ -87,11 +87,9 @@ output_recall_data = np.copy(break_data)
 # 將每一筆資料分別對Tij進行dot運算
 for i in range(data_count):
     output_recall_data[i, :] = np.dot(tij_wt, input_repair_data[i, :])
-
-# 正規化
-output_recall_data = np.where(output_recall_data > 0, 1, np.where(
-    output_recall_data < 0, -1, input_repair_data))
-
+    # 正規化
+    output_recall_data[i, :] = np.where(output_recall_data[i, :] > 0, 1, np.where(
+        output_recall_data[i, :] < 0, -1, input_repair_data[i, :]))
 
 # 已使用np.dot為最終計算寫法，以下保留撰寫過程
 # # recall_data = np.zeros(data_sum)
