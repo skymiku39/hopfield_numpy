@@ -46,8 +46,8 @@ tij_wt -= np.diag(np.diag(tij_wt))
 # STEP3.破壞DATA
 # 初始化
 # 計算破壞的pixel數量
-break_pct = 0.2
-break_count = int(data_sum * break_pct)
+break_pct = 20
+break_count = int(data_sum * break_pct / 100)
 
 # 隨機挑一個DATA
 cho_num = np.random.randint(0, data_count)
@@ -81,7 +81,6 @@ recall_data = np.dot(tij_wt, corrupt_data)
 # 上方內容等效
 repair_data = np.where(recall_data > 0, 1, np.where(
     recall_data < 0, -1, corrupt_data))
-
 
 # 方便比較DATA
 show_cho_data = np.reshape(cho_data, arr_shape)
