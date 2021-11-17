@@ -72,7 +72,14 @@ for i in range(data_count):
     # 對選擇的位置進行破壞
     break_data[i, rand_list] = np.where(break_data[i, rand_list] >= 1, -1, 1)
 
-# # STEP4.修復被破壞的DATA
+# STEP4.修復被破壞的DATA
+# 說明方法：透過 STEP2.的計算，Tij 已經儲存著每一筆資料的記憶
+# trng_data[n] = 記憶、data_count = n = 資料筆數，
+# 輸入 Xj (回憶) ，可以從 Tij (記憶庫) 提取儲存的記憶 <- 個人理解
+# 根據數學推導，Tij 與 Xj 相乘後對每一列個別加總，會得出一串無意義的數值
+# 將這些數值進行分析(正規化)，可以得出接近正確的回憶內容
+# 回憶的次數可能需要超過一次以上，因此需要迭代與收斂
+
 #
 # # # 初始化
 # # recall_data = np.zeros(data_sum)
