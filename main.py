@@ -59,7 +59,19 @@ break_count = int(data_sum * break_pct / 100)
 # rand_list = np.random.randint(data_sum, size=break_count)
 # # 依照對應的位置破壞DATA
 # corrupt_data[rand_list] = np.where(cho_data[rand_list] >= 1, -1, 1)
-# 
+
+# 將所有的DATA，按照break_pct的比例進行破壞
+# 複製原始DATA，並用一維排列
+all_data = np.reshape(trng_data, (data_count, data_sum))
+break_data = np.copy(all_data)
+# rand_list = np.zeros(break_data.shape)
+# 根據破壞的資料數 break_count，抽選DATA的位置
+for i in range(data_count):
+    # 抽選位置 (不重複)
+    rand_list = np.random.choice(data_sum, size=break_count, replace=False)
+    # 對選擇的位置進行破壞
+    break_data[i, rand_list] = np.where(break_data[i, rand_list] >= 1, -1, 1)
+
 # # STEP4.修復被破壞的DATA
 #
 # # # 初始化
