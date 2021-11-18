@@ -174,16 +174,19 @@ for i in range(0, sto_cnt, inc_val):
 # sto_data[s, :] = 目前資料 (要循環i+1次的)
 
 iter_cnt_list = []
+necrotic_neuron_list = []
 for i in range(0, sto_cnt, inc_val):
     # 初始化 in/out
     in_data = np.copy(sto_data)
     out_data = np.copy(sto_data)
+    # 初始化 統計變數
     # s 筆資料分別對 Tij 進行 dot 運算
     iter_cnt = np.zeros(i + 1)
+    necrotic_neuron = []
 
     for s in range(i + 1):
         # 初始化迭代計數
-        for iter_cnt[s] in range(100):
+        for iter_cnt[s] in range(1000):
             # in_data 對 wt_list(Tij) 進行 dot 運算
             out_data[s, :] = np.dot(wt_list[i], in_data[s, :])
             # 正規化
@@ -194,5 +197,10 @@ for i in range(0, sto_cnt, inc_val):
                 break
             # 如果尚未收斂，目前的輸出會取代下次輸入(迭代)
             in_data[s, :] = np.copy(out_data[s, :])
-        # 儲存迭代計數
+        # 如果未收斂，統計未修復的神經元
+        necrotic_neuron.append(np.sum((out_data[s, :] == sto_data[s, :]) == 0))
+
+    # 儲存迭代計數
     iter_cnt_list.append(iter_cnt)
+    # 儲存損壞的神經元個數
+    necrotic_neuron_list.append(necrotic_neuron)
