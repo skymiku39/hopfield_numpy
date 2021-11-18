@@ -148,9 +148,11 @@ for i in range(data_count):
 # 初始化
 # 設置神經元數量
 neurons = 100
-# 最大的儲存資料筆數、遞增數
-sto_cnt = 30
-inc_val = 1
+# 最大的儲存資料筆數
+sto_cnt = 10
+# 遞增數、執行次數
+inc_val = 5
+inc_cnt = int(sto_cnt / inc_val)
 # 統計計數
 stats_cnt = 100
 # 方便辨識
@@ -188,6 +190,7 @@ for loop in range(stats_cnt):
 
     iter_cnt_list = []
     necrotic_neuron_list = []
+    wt_cnt = 0
     for i in range(0, sto_cnt, inc_val):
         # 初始化 in/out
         in_data = np.copy(sto_data)
@@ -196,12 +199,11 @@ for loop in range(stats_cnt):
         # s 筆資料分別對 Tij 進行 dot 運算
         iter_cnt = np.zeros(i + 1)
         necrotic_neuron = []
-
         for s in range(i + 1):
             # 初始化迭代計數
-            for iter_cnt[s] in range(1000):
+            for iter_cnt[s] in range(100):
                 # in_data 對 wt_list(Tij) 進行 dot 運算
-                out_data[s, :] = np.dot(wt_list[i], in_data[s, :])
+                out_data[s, :] = np.dot(wt_list[wt_cnt], in_data[s, :])
                 # 正規化
                 out_data[s, :] = np.where(out_data[s, :] > 0, 1, np.where(
                     out_data[s, :] < 0, -1, in_data[s, :]))
@@ -212,11 +214,12 @@ for loop in range(stats_cnt):
                 in_data[s, :] = np.copy(out_data[s, :])
             # 如果未收斂，統計未修復的神經元
             necrotic_neuron.append(np.sum((out_data[s, :] == sto_data[s, :]) == 0))
+        wt_cnt += 1
 
         # 儲存迭代計數
         iter_cnt_list.append(iter_cnt)
         # 儲存損壞的神經元個數
         necrotic_neuron_list.append(necrotic_neuron)
     # 統計
-    for i in range(sto_cnt):
+    for i in range(inc_cnt):
         necrotic_neuron_cnt[i] += Counter(necrotic_neuron_list[i])
