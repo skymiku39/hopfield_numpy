@@ -134,15 +134,17 @@ for i in range(data_count):
 # 進行理論與實驗驗證，理論公式在 Hopfield paper，實驗使用"蒙地卡羅方法"驗證
 #
 # 實驗設計(自訂)：
-# 1.神經元數量 N = 100 (不要太小)
-#   資料筆數 s = 1、2、3、...n (遞增值與結果自訂)
-# 2.生成 n 筆 N 個隨機 +-1 的DATA
+# 1. 神經元數量 N = 100 (不要太小)
+#    資料筆數 s = 1、2、3、...n (遞增值與結果自訂)
+# 2. 生成 n 筆 N 個隨機 +-1 的 DATA
+# 3. 計算不同 s 下需要用到的權重 Tij
+#    補：本人使用的方式較吃記憶體(很小，可忽略)，可以不儲存權重一次算
 
 
 # 初始化
 # 設置神經元數量
 neurons = 100
-# 最大的儲存資料筆數、增量數
+# 最大的儲存資料筆數、遞增數
 sto_cnt = 30
 inc_val = 1
 # 方便辨識
@@ -151,3 +153,17 @@ data_shape = (sto_cnt, neurons)
 # 生成資料，參考STEP1.
 sto_data = np.where(np.random.random_sample(data_shape) > 0.5, 1, -1)
 
+# 計算權重，參考STEP2.
+wt_list = []
+# 建立 s 遞增迴圈
+for i in range(0, sto_cnt, inc_val):
+    # 初始化計算用權重
+    wt = np.zeros((neurons, neurons))
+
+    # 計算 s 筆資料的張量積，s 由 i + inc_val 遞增
+    for s in range(i + 1):
+        wt += np.outer(sto_data[s, :], sto_data[s, :])
+    # 主對角線為 0 (Tii=0)
+    wt -= np.diag(np.diag(wt))
+    # 儲存
+    wt_list.append(wt)
