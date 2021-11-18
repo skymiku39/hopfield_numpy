@@ -1,5 +1,5 @@
 import numpy as np
-from collections import Counter
+import collections as coll
 
 # STEP1.生成 DATA
 # DATA說明：生成100個由 -1、1 組成的數列(陣列)
@@ -161,7 +161,7 @@ data_shape = (sto_cnt, neurons)
 # 統計每筆的神經元個數
 necrotic_neuron_cnt = []
 for i in range(sto_cnt):
-    necrotic_neuron_cnt.append(Counter())
+    necrotic_neuron_cnt.append(coll.Counter())
 
 for loop in range(stats_cnt):
     # 當掉與否?
@@ -222,4 +222,4 @@ for loop in range(stats_cnt):
         necrotic_neuron_list.append(necrotic_neuron)
     # 統計
     for i in range(inc_cnt):
-        necrotic_neuron_cnt[i] += Counter(necrotic_neuron_list[i])
+        necrotic_neuron_cnt[i] += coll.Counter(necrotic_neuron_list[i])
