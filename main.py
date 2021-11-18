@@ -1,4 +1,5 @@
 import numpy as np
+from collections import Counter
 
 # STEP1.生成 DATA
 # DATA說明：生成100個由 -1、1 組成的數列(陣列)
@@ -140,6 +141,7 @@ for i in range(data_count):
 # 3. 計算不同 s 下需要用到的權重 Tij
 #    補：本人使用的方式較吃記憶體(很小，可忽略)，可以不儲存權重一次算
 # 4. 輸入原始 DATA 與 Tij 進行計算(回憶)，紀錄無法修復的神經元數量
+# 5. 統計無法修復的神經元數量
 
 
 # 初始化
@@ -204,3 +206,12 @@ for i in range(0, sto_cnt, inc_val):
     iter_cnt_list.append(iter_cnt)
     # 儲存損壞的神經元個數
     necrotic_neuron_list.append(necrotic_neuron)
+
+# 統計每筆的神經元個數
+# 初始化
+necrotic_neuron_cnt = []
+for i in range(sto_cnt):
+    necrotic_neuron_cnt.append(Counter())
+# 統計
+for i in range(sto_cnt):
+    necrotic_neuron_cnt[i] += Counter(necrotic_neuron_list[i])
