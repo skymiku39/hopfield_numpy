@@ -160,7 +160,7 @@ data_shape = (sto_cnt, neurons)
 
 # 統計每筆的神經元個數
 necrotic_neuron_cnt = []
-for i in range(sto_cnt):
+for i in range(inc_cnt):
     necrotic_neuron_cnt.append(coll.Counter())
 
 for loop in range(stats_cnt):
