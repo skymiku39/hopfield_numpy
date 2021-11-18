@@ -132,3 +132,22 @@ for i in range(data_count):
 # 2. 記憶表現與理論值差異多少？
 # 補充說明：神經元儲存器 Tij，會隨著記憶的資料筆數s不同，記憶結果會產生改變
 # 進行理論與實驗驗證，理論公式在 Hopfield paper，實驗使用"蒙地卡羅方法"驗證
+#
+# 實驗設計(自訂)：
+# 1.神經元數量 N = 100 (不要太小)
+#   資料筆數 s = 1、2、3、...n (遞增值與結果自訂)
+# 2.生成 n 筆 N 個隨機 +-1 的DATA
+
+
+# 初始化
+# 設置神經元數量
+neurons = 100
+# 最大的儲存資料筆數、增量數
+sto_cnt = 30
+inc_val = 1
+# 方便辨識
+data_shape = (sto_cnt, neurons)
+
+# 生成資料，參考STEP1.
+sto_data = np.where(np.random.random_sample(data_shape) > 0.5, 1, -1)
+
