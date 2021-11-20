@@ -2,6 +2,7 @@ import numpy as np
 
 
 def hopfield_test():
+    # def generate_data():
     # STEP1.生成 DATA
     # DATA說明：生成100個由 -1、1 組成的數列(陣列)
 
@@ -20,6 +21,7 @@ def hopfield_test():
     # 故，生成與計算用一維(省下np.ravel)，顯示轉二維是較便捷的做法
     # trng_data = np.where(np.random.random_sample((data_count, data_sum)) > 0.5, 1, -1)
 
+    # def calculate_weight():
     # STEP2.計算權重
     # 初始化
     tij_wt = np.zeros((data_sum, data_sum))
@@ -45,6 +47,7 @@ def hopfield_test():
     # 2.外層，將收到的一維的資料排在主對角線上，回傳二維資料
     tij_wt -= np.diag(np.diag(tij_wt))
 
+    # def destroy_data():
     # STEP3.破壞DATA
     # 初始化
     # 計算破壞的pixel數量
@@ -73,6 +76,7 @@ def hopfield_test():
         # 對選擇的位置進行破壞
         break_data[i, rand_list] = np.where(break_data[i, rand_list] >= 1, -1, 1)
 
+    # def repair_data():
     # STEP4.修復被破壞的DATA
     # 說明方法：透過 STEP2.的計算，Tij 已經儲存著每一筆資料的記憶
     # trng_data[n] = 記憶、data_count = n = 資料筆數，
